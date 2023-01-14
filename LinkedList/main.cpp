@@ -9,6 +9,7 @@ int main()
 	LinkedList<int> list;
 	list.push_back(1);
 	list.push_back(2);
+	int popedValue = list.pop_back();
 	//list.push_back(3);
 	//list.push_back(4);
 
