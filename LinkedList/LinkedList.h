@@ -1,6 +1,7 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
+#include <iostream>
 #include <sstream>
 
 
@@ -49,6 +50,25 @@ public:
 
 		return os;
 	}
+
+public:
+	class LinkedListException : public std::runtime_error {
+	private:
+		std::string mMessage;
+
+	public:
+
+		LinkedListException() : std::runtime_error("List error.") {}
+		LinkedListException(std::string message) : std::runtime_error(message.c_str()) 
+		{
+			mMessage = message;
+		}
+
+		std::string error() 
+		{
+			return (mMessage.empty()) ? "List error." : mMessage;
+		}
+	};
 };
 
 template<typename T>
@@ -98,11 +118,20 @@ template<typename T>
 inline T LinkedList<T>::pop_back()
 {
 	if (isEmpty())
-		return NULL;
+	{
+		try {
+			throw LinkedListException("Error! The list is empty.");
+		}
+		catch (LinkedListException exception) {
+			std::cerr << exception.error();
+			exit(1);
+		}
+	}
 
 	// The process is similar to the one I described in 'push_back' method,
 	// but with the difference that now we need the value of the last node
 	// (and also we need a double pointer, so we can change the actual value)
+	T lastValue = T();
 	Node** nextNode = &mFirst;
 	while (nextNode)
 	{
@@ -113,7 +142,7 @@ inline T LinkedList<T>::pop_back()
 		}
 
 		// Get the last value
-		T lastValue = (*nextNode)->value;
+		lastValue = (*nextNode)->value;
 
 		// Get rid of the last node
 		delete *nextNode;
@@ -121,10 +150,10 @@ inline T LinkedList<T>::pop_back()
 
 		// Decrease the size and return the value was found
 		--mSize;
-		return lastValue;
+		break;
 	}
 
-	return NULL;
+	return lastValue;
 }
 
 template<typename T>
