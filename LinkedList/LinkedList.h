@@ -1,9 +1,16 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-#include <iostream>
 #include <sstream>
 
+template <typename T>
+std::string getStringFromValue(const T& value)
+{
+	std::ostringstream os;
+	os << value;
+
+	return os.str();
+}
 
 template<typename T>
 class LinkedList
@@ -15,7 +22,7 @@ public:
 		struct Node* next = nullptr;
 	};
 
-	Node *mFirst = nullptr;
+	Node* mFirst = nullptr;
 
 public:
 	LinkedList();
@@ -23,10 +30,7 @@ public:
 	void push_back(const T& value);
 	T pop_back();
 	bool isEmpty() const;
-	unsigned long size() const;
-
-private:
-	unsigned long mSize;
+	std::string toString() const;
 
 public:
 	friend std::ostream& operator<<(std::ostream& os, const LinkedList<T>& list)
@@ -37,7 +41,7 @@ public:
 		// While there is a next node, 
 		// write it's value to the output stream
 		os << "[";
-		Node *current = list.mFirst;
+		Node* current = list.mFirst;
 		while (current)
 		{
 			os << current->value;
@@ -59,12 +63,12 @@ public:
 	public:
 
 		LinkedListException() : std::runtime_error("List error.") {}
-		LinkedListException(std::string message) : std::runtime_error(message.c_str()) 
+		LinkedListException(std::string message) : std::runtime_error(message.c_str())
 		{
 			mMessage = message;
 		}
 
-		std::string error() 
+		std::string error()
 		{
 			return (mMessage.empty()) ? "List error." : mMessage;
 		}
@@ -73,8 +77,7 @@ public:
 
 template<typename T>
 inline LinkedList<T>::LinkedList()
-	: mFirst(nullptr),
-	mSize(0)
+	: mFirst(nullptr)
 {
 }
 
@@ -82,7 +85,7 @@ template<typename T>
 inline void LinkedList<T>::push_back(const T& value)
 {
 	// Create a node
-	Node *node = new Node
+	Node* node = new Node
 	{
 		value,
 		nullptr
@@ -92,14 +95,13 @@ inline void LinkedList<T>::push_back(const T& value)
 	if (isEmpty())
 	{
 		mFirst = node;
-		++mSize;
 		return;
 	}
 
 	// And if it's not - find node with node->next is pointing to nullptr,
 	// that node is the last node we need. 
 	// When found, we can assign our new created node to it
-	Node *nextNode = mFirst;
+	Node* nextNode = mFirst;
 	while (nextNode)
 	{
 		if (nextNode->next)
@@ -109,7 +111,6 @@ inline void LinkedList<T>::push_back(const T& value)
 		}
 
 		nextNode->next = node;
-		++mSize;
 		return;
 	}
 }
@@ -145,11 +146,10 @@ inline T LinkedList<T>::pop_back()
 		lastValue = (*nextNode)->value;
 
 		// Get rid of the last node
-		delete *nextNode;
+		delete* nextNode;
 		*nextNode = nullptr;
 
 		// Decrease the size and return the value was found
-		--mSize;
 		break;
 	}
 
@@ -163,9 +163,26 @@ inline bool LinkedList<T>::isEmpty() const
 }
 
 template<typename T>
-inline unsigned long LinkedList<T>::size() const
+inline std::string LinkedList<T>::toString() const
 {
-	return mSize;
+	if (isEmpty())
+		return std::string();
+
+	// While there is a next node,
+	// add it's value to the result string
+	std::string result = "[";
+	Node* current = mFirst;
+	while (current)
+	{
+		result += getStringFromValue(current->value);
+		if (current->next)
+			result += ", ";
+
+		current = current->next;
+	}
+	result += "]";
+
+	return result;
 }
 
 #endif
