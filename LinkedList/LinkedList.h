@@ -3,6 +3,7 @@
 
 #include <sstream>
 
+
 template <typename T>
 std::string getStringFromValue(const T& value)
 {
