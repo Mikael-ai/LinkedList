@@ -9,6 +9,7 @@ int main()
 	LinkedList<int> list;
 	list.push_back(1);
 	list.push_back(2);
+	list.pop_back();
 	//list.push_back(3);
 	//list.push_back(4);
 
@@ -19,6 +20,5 @@ int main()
 	cout << "operator<< result: "
 	     << list << endl;
 
-	system("pause");
 	return 0;
 }
